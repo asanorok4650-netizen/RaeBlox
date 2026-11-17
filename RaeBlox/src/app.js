@@ -1,4 +1,5 @@
 import { initAuth } from "./auth.js";
+import { GAMES } from "../play/games/manifest.js";
 
 const friends = [
   { name: "Mochi", activity: "プレイ中: Sky Islands", initial: "M", bg: "linear-gradient(145deg,#c4b5fd,#7c3aed)", online: true },
@@ -9,15 +10,9 @@ const friends = [
   { name: "Rin", activity: "オフライン", initial: "R", bg: "linear-gradient(145deg,#86efac,#15803d)", online: false },
 ];
 
-const games = [
-  { id: 1, entry: "sky-islands", title: "Sky Islands", category: "Adventure", description: "浮遊島をめぐる大冒険", players: "2.4K", rating: "98%", symbol: "☁️", tag: "人気急上昇", bg: "linear-gradient(135deg,#60a5fa,#7c3aed 58%,#312e81)", filter: ["recommended","popular"] },
-  { id: 2, title: "Ocean Quest", category: "Exploration", description: "海の底に眠る秘密を探そう", players: "1.8K", rating: "96%", symbol: "🐠", tag: "新着", bg: "linear-gradient(135deg,#22d3ee,#2563eb 60%,#172554)", filter: ["recommended","popular"] },
-  { id: 3, title: "Block City RP", category: "Roleplay", description: "自分だけの街で暮らそう", players: "956", rating: "93%", symbol: "🏙️", tag: "みんなで遊ぼう", bg: "linear-gradient(135deg,#fbbf24,#ea580c 58%,#7f1d1d)", filter: ["recommended","recent"] },
-  { id: 4, entry: "neon-rush", title: "Neon Rush", category: "Obby", description: "ネオンのコースを駆け抜けろ", players: "3.1K", rating: "95%", symbol: "⚡", tag: "人気", bg: "linear-gradient(135deg,#ec4899,#7c3aed 55%,#1e1b4b)", filter: ["popular","recent"] },
-  { id: 5, title: "Boo Hotel", category: "Tycoon", description: "ゴーストホテルを育てよう", players: "742", rating: "91%", symbol: "👻", tag: "まったり", bg: "linear-gradient(135deg,#312e81,#6d28d9 55%,#f472b6)", filter: ["recommended","popular"] },
-  { id: 6, title: "Treasure Tycoon", category: "Simulator", description: "宝物を集めて島を大きくしよう", players: "1.2K", rating: "94%", symbol: "💎", tag: "おすすめ", bg: "linear-gradient(135deg,#34d399,#0f766e 55%,#164e63)", filter: ["recent","recommended"] },
-];
-
+// ゲーム一覧は play/games/<id>/meta.js から自動生成(play/games/manifest.js)。ここは編集不要。
+// game.js があるものだけ遊べる(無いものは「準備中」)。
+const games = GAMES.map(g => ({ ...g.meta, id: g.id, playable: !!g.load }));
 const friendStrip = document.querySelector("#friendStrip");
 const gameGrid = document.querySelector("#gameGrid");
 const searchInput = document.querySelector("#searchInput");
@@ -62,9 +57,9 @@ function renderGames() {
   emptyState.classList.toggle("hidden", filtered.length > 0);
   gameGrid.querySelectorAll("[data-game]").forEach(card => {
     const launch = () => {
-      const game = games.find(item => item.id === Number(card.dataset.game));
-      // entry があるゲームは、ゲーム実行ページ(play/)へ移動する。無いものは準備中
-      if (game.entry) location.href = `./play/?game=${encodeURIComponent(game.entry)}`;
+      const game = games.find(item => item.id === card.dataset.game);
+      // game.js があるゲームは、ゲーム実行ページ(play/)へ移動する。無いものは準備中
+      if (game.playable) location.href = `./play/?game=${encodeURIComponent(game.id)}`;
       else showToast(`${game.title} はゲーム接続準備中です`);
     };
     card.addEventListener("click", launch);
