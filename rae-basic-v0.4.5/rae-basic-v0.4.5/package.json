@@ -1,0 +1,10 @@
+{
+  "name": "rae-basic",
+  "version": "0.4.5",
+  "private": true,
+  "type": "module",
+  "description": "RAE v0.4.2 + Rapier 3D: 基本操作・衝突・重力のデモ/ライブラリ",
+  "scripts": { "test": "node test/character.mjs && node test/camera.mjs && npm run test:rae",
+    "test:rae": "node --import ./rae/test/rebuild-loader.mjs rae/test/rebuild.mjs && node --import ./rae/test/rebuild-loader.mjs test/rae-contract.mjs", "serve": "npx http-server -c-1 ." },
+  "devDependencies": { "@dimforge/rapier3d-compat": "0.21.0" }
+}
