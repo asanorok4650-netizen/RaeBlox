@@ -1,0 +1,29 @@
+name: Auto Unzip
+
+on:
+  push:
+    branches:
+      - main # 対象ブランチ（masterの場合は変更してください）
+    paths:
+      - '**.zip' # ZIPファイルが追加・更新された時だけ実行
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unzip files
+        run: |
+          find . -maxdepth 2 -name "*.zip" -exec sh -c 'unzip -o "$1" -d "${1%.*}" && rm "$1"' _ {} \;
+
+      - name: Commit and push extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@://github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto unzip uploaded files" && git push)
