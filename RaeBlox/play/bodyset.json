@@ -3,24 +3,48 @@
   "version": 1,
   "unit": "meter (1 stud = 0.28 m)",
   "parts": {
-    "Torso": {
-      "file": "parts/Torso.glb",
+    "NCCv2 Torso": {
+      "file": "parts/NCCv2-Torso.glb",
       "meta": {}
     },
-    "Left Arm": {
-      "file": "parts/LeftArm.glb",
+    "NCCv2 Left Arm": {
+      "file": "parts/NCCv2-LeftArm.glb",
       "meta": {}
     },
-    "Right Arm": {
-      "file": "parts/RightArm.glb",
+    "NCCv2 Right Arm": {
+      "file": "parts/NCCv2-RightArm.glb",
       "meta": {}
     },
-    "Left Leg": {
-      "file": "parts/LeftLeg.glb",
+    "NCCv2 Left Leg": {
+      "file": "parts/NCCv2-LeftLeg.glb",
       "meta": {}
     },
-    "Right Leg": {
-      "file": "parts/RightLeg.glb",
+    "NCCv2 Right Leg": {
+      "file": "parts/NCCv2-RightLeg.glb",
+      "meta": {}
+    },
+    "Girl3.0 Torso": {
+      "file": "parts/Girl3.0-Torso.glb",
+      "meta": {}
+    },
+    "Girl3.0 Left Arm": {
+      "file": "parts/Girl3.0-LeftArm.glb",
+      "meta": {}
+    },
+    "Girl3.0 Right Arm": {
+      "file": "parts/Girl3.0-RightArm.glb",
+      "meta": {}
+    },
+    "Girl3.0 Left Leg": {
+      "file": "parts/Girl3.0-LeftLeg.glb",
+      "meta": {}
+    },
+    "Girl3.0 Right Leg": {
+      "file": "parts/Girl3.0-RightLeg.glb",
+      "meta": {}
+    },
+    "RobloxGirl Torso": {
+      "file": "parts/RobloxGirl-Torso.glb",
       "meta": {}
     }
   }
