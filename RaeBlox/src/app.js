@@ -1,3 +1,5 @@
+import { initAuth } from "./auth.js";
+
 const friends = [
   { name: "Mochi", activity: "プレイ中: Sky Islands", initial: "M", bg: "linear-gradient(145deg,#c4b5fd,#7c3aed)", online: true },
   { name: "Hima", activity: "オンライン", initial: "H", bg: "linear-gradient(145deg,#fde68a,#d97706)", online: true },
@@ -109,7 +111,7 @@ document.querySelectorAll(".nav-item").forEach(item => item.addEventListener("cl
   if (item.dataset.page !== "home") showToast(`${item.textContent.trim()} は順次公開予定です`);
   document.querySelectorAll(".nav-item").forEach(nav => nav.classList.toggle("active", nav === item));
 }));
-document.querySelector("#accountButton").addEventListener("click", () => showToast("アカウントメニューは準備中です"));
+initAuth({ showToast });
 document.querySelector(".notification-button").addEventListener("click", () => showToast("新しい通知はありません"));
 document.querySelector(".currency-pill").addEventListener("click", () => showToast("Rae 通貨システムは準備中です"));
 const sidebar = document.querySelector("#sidebar");
