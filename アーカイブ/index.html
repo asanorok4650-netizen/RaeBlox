@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111116">
+  <meta name="description" content="RaeBlox - Discover games and play together.">
+  <title>RaeBlox - ホーム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/main.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="RaeBlox ホーム"><span class="brand-mark">R</span><span class="brand-name">RaeBlox</span></a>
+      <nav class="side-nav" aria-label="メインナビゲーション">
+        <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span><span>ホーム</span></button>
+        <button class="nav-item" data-page="moments"><span class="nav-icon">▣</span><span>モーメント</span><span class="soon">準備中</span></button>
+        <button class="nav-item" data-page="chat"><span class="nav-icon">▤</span><span>チャット</span><span class="soon">準備中</span></button>
+        <button class="nav-item profile-nav" data-page="profile"><span class="mini-avatar avatar-you">R</span><span>自分</span></button>
+        <button class="nav-item" data-page="more"><span class="nav-icon">•••</span><span>その他</span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="sidebar-status"><span class="status-dot"></span>すべてのシステムが正常</div><div class="sidebar-version">RAE ENGINE PLATFORM</div></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu icon-button" id="menuButton" aria-label="メニュー">☰</button>
+        <a class="mobile-brand" href="#">RaeBlox</a>
+        <label class="search-box"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="ゲームや体験を検索" autocomplete="off"><kbd>/</kbd></label>
+        <div class="top-actions">
+          <button class="currency-pill" title="近日公開"><span class="coin-icon">✦</span><span>0</span><span class="currency-label">Rae</span></button>
+          <button class="icon-button notification-button" aria-label="通知" title="通知">♧<i></i></button>
+          <button class="account-button" id="accountButton" aria-label="アカウントメニュー"><span class="mini-avatar avatar-you">R</span><span class="account-chevron">⌄</span></button>
+        </div>
+      </header>
+      <div class="page-wrap">
+        <section class="welcome-row"><div><p class="eyebrow">YOUR NEXT ADVENTURE STARTS HERE</p><h1>おかえりなさい！</h1><p class="welcome-subtitle">今日はどんな世界を冒険しますか？</p></div><div class="welcome-decoration" aria-hidden="true"><span class="spark spark-one">✦</span><span class="spark spark-two">✧</span><div class="orb"></div></div></section>
+        <section class="friends-section section-block">
+          <div class="section-heading compact-heading"><div><h2>フレンド</h2><span class="section-note">オンラインのプレイヤー</span></div><button class="text-button" id="addFriendButton">＋ フレンドを追加</button></div>
+          <div class="friend-strip" id="friendStrip"></div>
+        </section>
+        <section class="section-block games-section">
+          <div class="section-heading game-heading"><div><h2>見つけよう</h2><span class="section-note">あなたにおすすめの体験</span></div>
+            <div class="tabs" role="tablist" aria-label="ゲームカテゴリー">
+              <button class="tab active" data-filter="recommended" role="tab" aria-selected="true">おすすめ</button>
+              <button class="tab" data-filter="popular" role="tab" aria-selected="false">人気</button>
+              <button class="tab" data-filter="recent" role="tab" aria-selected="false">最近プレイ</button>
+            </div>
+          </div>
+          <div class="game-grid" id="gameGrid"></div>
+          <div class="empty-state hidden" id="emptyState"><span>⌕</span><h3>ゲームが見つかりません</h3><p>別のキーワードで検索してみてください。</p></div>
+        </section>
+        <footer class="footer"><span>© 2026 RaeBlox</span><span>Powered by RAE Engine</span><a href="#">コミュニティガイドライン</a></footer>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="modal" id="friendModal">
+    <form method="dialog" class="modal-card" id="friendForm">
+      <button class="modal-close" aria-label="閉じる">×</button><span class="modal-icon">＋</span><h2>フレンドを追加</h2><p>プレイヤー名でフレンドを検索できます。</p>
+      <input id="friendName" type="text" placeholder="プレイヤー名を入力" maxlength="24" autocomplete="off">
+      <button class="primary-button" id="sendFriendRequest" type="submit">リクエストを送信</button><small>フレンド機能は現在デモ表示です。</small>
+    </form>
+  </dialog>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
