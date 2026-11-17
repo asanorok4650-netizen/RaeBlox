@@ -24,6 +24,28 @@ function fail(title, err) {
 }
 const lsGet = (k) => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
 
+// ボディパーツ(GLB)は自前の色(グレー)を持っていて、アバターの体色(BodyColors)を上書きしてしまう。
+// 読み込んだアバターの体色を、テクスチャの無い独自パーツへ当て直す(テクスチャ付きのパーツは、その絵を優先)。
+const PART_COLOR = { 'Head': 'head', 'Torso': 'torso', 'Left Arm': 'leftArm', 'Right Arm': 'rightArm', 'Left Leg': 'leftLeg', 'Right Leg': 'rightLeg' };
+const srgbToLinear = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+function hexToLinear(hex) { // 体色は sRGB の16進。パーツの色は three の作業色空間(線形)で持つ
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ''));
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => srgbToLinear(v / 255));
+}
+function paintBodyParts(player, colors) {
+  if (!colors) return;
+  for (const [slot, cp] of Object.entries(player.extraBodyParts || {})) {
+    const rgb = hexToLinear(colors[PART_COLOR[slot]]);
+    if (!rgb || !cp || cp.texture) continue;
+    cp.color = rgb; cp.plainColor = rgb;          // 以後の再構築(付け替え・読み込み直し)でも保たれる
+    const part = player.built && player.built.parts.find((p) => p.name === slot && !p.accessory);
+    const mats = part && part.object.material ? [].concat(part.object.material) : [];
+    for (const m of mats) if (!m.map) m.color.setRGB(rgb[0], rgb[1], rgb[2]);
+  }
+}
+
 async function main() {
   const gameId = params.get('game');
   if (!gameId) throw new Error('ゲームが指定されていません(?game=sky-islands など)');
@@ -54,8 +76,15 @@ async function main() {
 
   // アバター: ?user=ID があれば優先、無ければホームで保存した ID、どちらも無ければブロックアバター
   const uid = params.get('user') || lsGet(USER_ID_KEY);
+  let bodyColors = null;
+  // ボディパーツを後から付け替えたときも、体色を当てる
+  basic.engine.on('bodypart', (_info, actor) => { if (!actor || actor === basic.engine.player) paintBodyParts(basic.engine.player, bodyColors); });
   if (uid) {
-    try { await basic.engine.loadUser(uid); }
+    try {
+      const r = await basic.engine.loadUser(uid);
+      bodyColors = r && r.desc && r.desc.colors;
+      paintBodyParts(basic.engine.player, bodyColors);
+    }
     catch (e) {
       console.error(e);
       const p = await checkProxy().catch(() => null);
