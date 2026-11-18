@@ -1,5 +1,5 @@
 // ボディパーツの選択(「自分」ページ me/ で決め、ゲーム play/ が読む)。選択は localStorage に保存する。
-//   保存形式: { "Torso": "Torso#0", "Left Arm": "" }   ""=外す。キーが無い部位は「先頭のパーツをつける」(既定)
+//   保存形式: { "Torso": "NCCv2 Torso#0", "Left Arm": "" }   ""=外す。未設定の部位は「標準のボディパーツ」(パーツなし、既定)
 import { BODYPARTS_KEY, BODYSET_META } from './config.js';
 
 export const SLOT_LABEL = { 'Head': '頭', 'Torso': '胴体', 'Left Arm': '左腕', 'Right Arm': '右腕', 'Left Leg': '左脚', 'Right Leg': '右脚' };
@@ -54,15 +54,9 @@ export async function loadBodyset() {
 const slotsOf = (items) => [...new Set(items.map((i) => i.slot))];
 const readSaved = () => { try { return JSON.parse(localStorage.getItem(BODYPARTS_KEY) || '{}') || {}; } catch { return {}; } };
 
-/** 保存済みの選択 → Map(部位 → item | null)。未設定の部位は、その部位の先頭のパーツ */
+/** 保存済みの選択 → Map(部位 → item | null)。未設定・不明な部位は null(= 標準のボディパーツ) */
 export function loadSelection(items) {
-  const saved = readSaved(), sel = new Map();
-  for (const slot of slotsOf(items)) {
-    const list = items.filter((i) => i.slot === slot);
-    const id = saved[slot];
-    sel.set(slot, id === '' ? null : (list.find((i) => i.id === id) || list[0]));
-  }
-  return sel;
+  return selectionFromObject(items, readSaved());
 }
 
 /** { 部位: id|'' } の形(保存・やり直し履歴用) */
