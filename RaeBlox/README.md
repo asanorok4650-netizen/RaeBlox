@@ -29,7 +29,7 @@ vendor/rae-basic/0.4.5/ RAE-Basic v0.4.5(rae/ と src/basic/)。無改変・読�
 ```
 
 ## ボディパーツ
-ゲーム内のパネルは無く、ホームの「自分」(`me/`)で選びます。選択は localStorage の `raeblox.bodyparts` に保存され、ゲーム起動時に `play/runtime.js` が付けます(未設定の部位は、その部位の先頭のパーツ)。
+ゲーム内のパネルは無く、ホームの「自分」(`me/`)で選びます。選択は localStorage の `raeblox.bodyparts` に保存され、ゲーム起動時に `play/runtime.js` が付けます(未設定のときは標準のボディパーツ。「全部外す」でも標準に戻ります)。
 パーツを増やすには `play/parts/` に GLB を置き、`play/bodyset.json` に足します。キーは `"<セット名> <部位>"` です(部位は `Head` / `Torso` / `Left Arm` / `Right Arm` / `Left Leg` / `Right Leg`)。
 例: `"NCCv2 Left Arm": { "file": "parts/NCCv2-LeftArm.glb", "meta": {} }`。同じセット名のパーツは、「自分」ページの「セット」ボタンでまとめて着られます(部位が欠けたセットも可)。
 
