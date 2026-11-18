@@ -7,8 +7,11 @@ export const PROXY_BASE = 'https://rbx-db-proxy.konoyo9641.workers.dev';
 // 使用している RAE-Basic の版(vendor/rae-basic/<版>/)。版を上げるときは runtime.js の import 先も揃える。
 export const BASIC_VERSION = '0.4.5';
 
-// ボディパーツ付け替えパネル(右端の🧍)。RaeBlox のアバター画面ができたら false にして置き換える。
-export const ENABLE_BODYSET = true;
+// ボディパーツの選択を保存する localStorage のキー。「自分」ページ(me/)で決めて、ゲーム(play/)が読む。
+export const BODYPARTS_KEY = 'raeblox.bodyparts';
+
+// ボディパーツ(GLB)を付けるときの共通 meta(setBodyPart の meta)
+export const BODYSET_META = { clothBase: 'skin' };
 
 // 「自分」のアバターに使う Roblox ユーザーID を保存する localStorage のキー(?user=ID でも上書きできる)
 export const USER_ID_KEY = 'raeblox.userId';

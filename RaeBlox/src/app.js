@@ -103,6 +103,7 @@ document.addEventListener("keydown", event => {
   }
 });
 document.querySelectorAll(".nav-item").forEach(item => item.addEventListener("click", () => {
+  if (item.dataset.page === "profile") { location.href = "./me/"; return; }   // 「自分」: ボディパーツ編集ページ
   if (item.dataset.page !== "home") showToast(`${item.textContent.trim()} は順次公開予定です`);
   document.querySelectorAll(".nav-item").forEach(nav => nav.classList.toggle("active", nav === item));
 }));

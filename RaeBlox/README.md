@@ -16,15 +16,22 @@ npx http-server -c-1 .
 
 ```
 scripts/gen-games.mjs  games/ から manifest.js を生成
+me/                     「自分」ページ(ボディパーツを選ぶ画面。RAE だけ使う)
 index.html, src/        ホーム画面(three も物理も読み込まない)
 play/                   ゲーム実行ページ(RAE-Basic はここだけで使う)
   index.html            importmap(three / Rapier)と #stage
   runtime.js            RaeBlox と RAE-Basic の境界(プロキシ設定・アバター・ゲーム読み込み・後片付け)
-  config.js             プロキシURL・Basicの版・ボディパーツパネルの有無
+  config.js             プロキシURL・Basicの版・ボディパーツ選択の保存キー
+  bodyparts.js          ボディパーツの選択(保存・読み込み・アバターへの反映)。me/ と runtime.js が共有
   games/<id>/           ゲーム1本ぶん(meta.js + game.js)。manifest.js は自動生成
   bodyset.json, parts/  ボディパーツ
 vendor/rae-basic/0.4.5/ RAE-Basic v0.4.5(rae/ と src/basic/)。無改変・読み取り専用
 ```
+
+## ボディパーツ
+ゲーム内のパネルは無く、ホームの「自分」(`me/`)で選びます。選択は localStorage の `raeblox.bodyparts` に保存され、ゲーム起動時に `play/runtime.js` が付けます(未設定の部位は、その部位の先頭のパーツ)。
+パーツを増やすには `play/parts/` に GLB を置き、`play/bodyset.json` に足します。キーは `"<セット名> <部位>"` です(部位は `Head` / `Torso` / `Left Arm` / `Right Arm` / `Left Leg` / `Right Leg`)。
+例: `"NCCv2 Left Arm": { "file": "parts/NCCv2-LeftArm.glb", "meta": {} }`。同じセット名のパーツは、「自分」ページの「セット」ボタンでまとめて着られます(部位が欠けたセットも可)。
 
 ## ゲームの遊び方
 ホームのゲームカードをクリックすると `play/?game=<id>` へ移動します(`game.js` を持つゲームのみ。他は準備中)。
@@ -39,7 +46,7 @@ vendor/rae-basic/0.4.5/ RAE-Basic v0.4.5(rae/ と src/basic/)。無改変・読�
 ローカルで確認するときだけ `node scripts/gen-games.mjs` を実行してください。
 
 ## RAE-Basic を更新する
-`vendor/rae-basic/<新しい版>/` を追加し、`play/runtime.js` の import 先と `play/config.js` の `BASIC_VERSION` を揃える。
+`vendor/rae-basic/<新しい版>/` を追加し、`play/runtime.js` と `me/me.js` の import 先、`play/config.js` の `BASIC_VERSION` を揃える。
 
 ## プロキシ
 `play/config.js` の `PROXY_BASE` を、起動時に `CONFIG.proxyBase` へ明示的に設定します。Worker の `ALLOWED_ORIGIN` に、ページのOrigin(ポートまで完全一致)が必要です。

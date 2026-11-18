@@ -3,8 +3,9 @@
 import RAPIER from '@dimforge/rapier3d-compat';
 import { createBasic } from '../vendor/rae-basic/0.4.5/src/basic/index.js';
 import { CONFIG, checkProxy } from '../vendor/rae-basic/0.4.5/rae/src/index.js';
-import { PROXY_BASE, ENABLE_BODYSET, USER_ID_KEY } from './config.js';
+import { PROXY_BASE, USER_ID_KEY } from './config.js';
 import { loadGame } from './games/index.js';
+import { loadBodyset, loadSelection, applySelection, paintBodyParts } from './bodyparts.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -24,28 +25,6 @@ function fail(title, err) {
 }
 const lsGet = (k) => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
 
-// ボディパーツ(GLB)は自前の色(グレー)を持っていて、アバターの体色(BodyColors)を上書きしてしまう。
-// 読み込んだアバターの体色を、テクスチャの無い独自パーツへ当て直す(テクスチャ付きのパーツは、その絵を優先)。
-const PART_COLOR = { 'Head': 'head', 'Torso': 'torso', 'Left Arm': 'leftArm', 'Right Arm': 'rightArm', 'Left Leg': 'leftLeg', 'Right Leg': 'rightLeg' };
-const srgbToLinear = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-function hexToLinear(hex) { // 体色は sRGB の16進。パーツの色は three の作業色空間(線形)で持つ
-  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ''));
-  if (!m) return null;
-  const n = parseInt(m[1], 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => srgbToLinear(v / 255));
-}
-function paintBodyParts(player, colors) {
-  if (!colors) return;
-  for (const [slot, cp] of Object.entries(player.extraBodyParts || {})) {
-    const rgb = hexToLinear(colors[PART_COLOR[slot]]);
-    if (!rgb || !cp || cp.texture) continue;
-    cp.color = rgb; cp.plainColor = rgb;          // 以後の再構築(付け替え・読み込み直し)でも保たれる
-    const part = player.built && player.built.parts.find((p) => p.name === slot && !p.accessory);
-    const mats = part && part.object.material ? [].concat(part.object.material) : [];
-    for (const m of mats) if (!m.map) m.color.setRGB(rgb[0], rgb[1], rgb[2]);
-  }
-}
-
 async function main() {
   const gameId = params.get('game');
   if (!gameId) throw new Error('ゲームが指定されていません(?game=sky-islands など)');
@@ -63,9 +42,13 @@ async function main() {
     camera: game.camera,
     character: game.character,
     ui: false,                                   // 開発用のアバター読み込みパネルは使わない(「自分」ページの役目)
-    bodyset: ENABLE_BODYSET ? { url: './bodyset.json', meta: { clothBase: 'skin' } } : false,
+    bodyset: false,                              // ゲーム内のボディパーツ付け替えパネルは無し(「自分」ページ me/ で決める)
   });
   window.basic = basic;                          // デバッグ用(コンソールから触れる)
+
+  // 「自分」ページで選んだボディパーツを付ける(失敗してもゲームは続ける)
+  const bodyItems = await loadBodyset().catch((e) => { console.warn('[bodyparts]', e); return null; });
+  if (bodyItems) await applySelection(basic.engine.player, bodyItems, loadSelection(bodyItems)).catch((e) => console.warn('[bodyparts]', e));
 
   await game.setup(basic);
   const [x, y, z] = game.spawn || [0, 3, 0];
